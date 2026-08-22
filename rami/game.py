@@ -72,7 +72,11 @@ def legal_moves(state: GameState) -> List[Move]:
     if state.stock:
         draw_sources.append("stock")
     if state.cfg.draw_from_stock_or_discard and state.discard:
-        draw_sources.append("discard")
+        # Rami 51 rule: cannot take from discard until first meld is laid
+        if cfg.block_discard_before_threshold and not player.has_laid_first:
+            pass  # discard forbidden
+        else:
+            draw_sources.append("discard")
     if not draw_sources:
         return []  # no moves possible
 

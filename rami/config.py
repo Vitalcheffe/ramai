@@ -31,9 +31,16 @@ class RamiConfig:
     must_discard_to_end_turn: bool = True
     can_discard_joker: bool = False           # house rule: jokers can't be thrown
 
+    # Rami 51 rule: cannot take from discard until first meld threshold met
+    # If True, drawing from discard is forbidden until has_laid_first is True.
+    block_discard_before_threshold: bool = False
+
     # Stalemate protection: if no meld is laid for N consecutive turns,
     # game ends and lowest-deadwood player wins.
     stalemate_turns: int = 50
+
+    # Allow extending existing laid melds (e.g. add 4♥ to opponent's 5-6-7♥)
+    allow_meld_extensions: bool = True
 
     # Scoring at end (for opponent's deadwood if player goes out)
     face_card_value: int = 10
@@ -48,7 +55,7 @@ class RamiConfig:
 
     @classmethod
     def threshold_51(cls) -> "RamiConfig":
-        return replace(cls(), first_meld_threshold=51)
+        return replace(cls(), first_meld_threshold=51, block_discard_before_threshold=True)
 
     @classmethod
     def no_threshold(cls) -> "RamiConfig":

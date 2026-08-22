@@ -1,9 +1,14 @@
-"""Rami vision package — YOLO card detection (run in Colab, not in CLI).
-
-This module is imported by the notebook. It gracefully degrades to a
-mock detector when torch/ultralytics are not available (so the rest of
-the notebook can be developed without GPU).
-"""
+"""Rami vision package — YOLO card detection + calibration + clusters."""
 from .detector import CardDetector, Detection, MockDetector
+from .calibration import (
+    CalibrationResult, DiscardDetection, MeldCluster,
+    calibrate_camera, detect_discard_pile, detect_meld_clusters,
+    find_extendable_melds,
+)
 
-__all__ = ["CardDetector", "Detection", "MockDetector"]
+__all__ = [
+    "CardDetector", "Detection", "MockDetector",
+    "CalibrationResult", "DiscardDetection", "MeldCluster",
+    "calibrate_camera", "detect_discard_pile", "detect_meld_clusters",
+    "find_extendable_melds",
+]
