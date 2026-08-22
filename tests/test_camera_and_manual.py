@@ -14,7 +14,7 @@ from rami.vision.camera import (
     prewarm_camera, is_camera_ready, get_camera_status, stop_camera,
 )
 from rami.vision.pretrained import (
-    try_download_pretrained, list_candidate_urls, get_model_info,
+    try_download_pretrained, get_model_info, get_download_url,
 )
 from rami.vision import (
     CardDetector, MockDetector, detect_discard_pile,
@@ -59,12 +59,11 @@ class TestPretrainedDownloader:
     URLs fail, return None and fall back to MANUAL mode."""
 
     def test_candidate_urls_listed(self):
-        """list_candidate_urls() returns a non-empty list of URLs."""
-        urls = list_candidate_urls()
-        assert isinstance(urls, list)
-        assert len(urls) > 0
-        for url in urls:
-            assert url.startswith("http"), f"invalid URL: {url}"
+        """get_download_url() returns the canonical download URL."""
+        url = get_download_url()
+        assert isinstance(url, str)
+        assert url.startswith("http"), f"invalid URL: {url}"
+        assert "ramai" in url or "github.com" in url
 
     def test_download_to_nonexistent_dir_creates_it(self, tmp_path):
         """download should create the output directory if it doesn't exist."""

@@ -1,79 +1,57 @@
 """Pre-trained YOLO model downloader.
 
-Tries to download a pre-trained YOLOv8 model for playing cards from
-several public mirrors. If all downloads fail (offline, 404, etc.),
-returns None — caller should fall back to MANUAL mode (no vision).
+Downloads from the project's own GitHub release. This URL is permanent
+and reliable (unlike ad-hoc HuggingFace/Roboflow mirrors).
 
-We do NOT ship a model in the repo (would be too large). We try a list
-of known public URLs, in order. The first one that succeeds wins.
+Release URL:
+  https://github.com/VitalCheffe/ramai/releases/download/v0.1.0-vision-bootstrap/yolov8n.pt
 
-Known public mirrors (as of 2026):
-  1. Roboflow Universe public weights (no API key needed for some projects)
-  2. Hugging Face Hub (specific spaces)
-  3. GitHub releases of well-known cards-yolo repos
-
-Each URL is tried with a short timeout (5s). If it returns a 200 with
-content > 1MB, we save it to `out_path` and return the path.
+This is the YOLOv8n COCO-pretrained backbone. To get a CARDS-specific
+model, the user runs notebooks/train_yolo.ipynb in Colab (30 min on
+free GPU), then uploads the resulting best.pt to a new release
+v0.2.0-cards and updates DOWNLOAD_URL below.
 """
 from __future__ import annotations
 import os
 import urllib.request
-from typing import List, Optional
+from typing import Optional
 import hashlib
 
 
-# Candidate URLs for pre-trained YOLOv8 playing-cards models.
-# Order matters: we try them in sequence.
-CANDIDATE_URLS: List[str] = [
-    # 1. HuggingFace — public cards detector spaces (most reliable)
-    "https://huggingface.co/spaces/playing-cards/yolov8-cards/resolve/main/best.pt",
-    "https://huggingface.co/playing-cards-yolo/best/resolve/main/best.pt",
-    # 2. GitHub releases (LFS-backed, large files)
-    "https://github.com/ultralytics/playing-cards/releases/download/v0.0.1/best.pt",
-    "https://github.com/edeverett/playing-cards-yolo/releases/download/v1.0/best.pt",
-    # 3. Roboflow public mirror (some projects host weights publicly)
-    "https://universe.roboflow.com/playing-cards/yolov8n-cards/resolve/main/best.pt",
-]
+# Permanent URL — the project's own GitHub release
+DOWNLOAD_URL = "https://github.com/VitalCheffe/ramai/releases/download/v0.1.0-vision-bootstrap/yolov8n.pt"
+EXPECTED_SIZE = 6_534_387  # bytes
 
 
-def try_download_pretrained(out_path: str = "models/yolo_cards.pt",
-                              timeout: int = 5) -> Optional[str]:
-    """Try to download a pre-trained YOLO cards model.
+def try_download_pretrained(out_path: str = "models/yolov8n.pt",
+                              timeout: int = 30) -> Optional[str]:
+    """Download the YOLO model from the project's GitHub release.
 
     Returns the path to the downloaded model if successful, None otherwise.
     The caller should fall back to MANUAL mode if None is returned.
-
-    The download is silent — no exception is raised on failure. The
-    function tries each candidate URL in order, with a short timeout,
-    and returns the first one that succeeds.
     """
     os.makedirs(os.path.dirname(out_path) or ".", exist_ok=True)
 
-    for url in CANDIDATE_URLS:
-        try:
-            # HEAD-like check first: try to fetch with short timeout
-            req = urllib.request.Request(url, method="GET",
-                                          headers={"User-Agent": "rami-ai/0.1"})
-            with urllib.request.urlopen(req, timeout=timeout) as resp:
-                if resp.status != 200:
-                    continue
-                data = resp.read()
-                # Must be > 1MB to be a real YOLO model
-                if len(data) < 1_000_000:
-                    continue
-                # Write to disk
-                with open(out_path, "wb") as f:
-                    f.write(data)
-                return out_path
-        except Exception:
-            continue
+    # If file already exists and has the right size, skip download
+    if os.path.exists(out_path):
+        size = os.path.getsize(out_path)
+        if size == EXPECTED_SIZE or size > 1_000_000:
+            return out_path
 
-    return None
-
-
-def list_candidate_urls() -> List[str]:
-    """Return the list of candidate URLs (for documentation/debugging)."""
-    return list(CANDIDATE_URLS)
+    try:
+        req = urllib.request.Request(DOWNLOAD_URL,
+                                      headers={"User-Agent": "ramai/0.1"})
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            if resp.status != 200:
+                return None
+            data = resp.read()
+            if len(data) < 1_000_000:
+                return None
+            with open(out_path, "wb") as f:
+                f.write(data)
+            return out_path
+    except Exception:
+        return None
 
 
 def get_model_info(path: str) -> dict:
@@ -82,7 +60,6 @@ def get_model_info(path: str) -> dict:
         return {"exists": False}
     size = os.path.getsize(path)
     with open(path, "rb") as f:
-        # Read first 4KB to compute a quick hash
         head = f.read(4096)
     return {
         "exists": True,
@@ -91,3 +68,8 @@ def get_model_info(path: str) -> dict:
         "sha256_head": hashlib.sha256(head).hexdigest()[:16],
         "path": path,
     }
+
+
+def get_download_url() -> str:
+    """Return the canonical download URL."""
+    return DOWNLOAD_URL

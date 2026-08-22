@@ -7,10 +7,11 @@ from .calibration import (
 )
 from .camera import (
     CameraStatus, prewarm_camera, capture_photo, is_camera_ready,
-    get_camera_status, stop_camera,
+    is_file_input_mode, get_camera_status, stop_camera,
+    capture_photo_file_input, init_file_input_mode,
 )
 from .pretrained import (
-    try_download_pretrained, list_candidate_urls, get_model_info,
+    try_download_pretrained, get_model_info, get_download_url,
 )
 
 __all__ = [
@@ -22,7 +23,8 @@ __all__ = [
     "find_extendable_melds",
     # Camera
     "CameraStatus", "prewarm_camera", "capture_photo", "is_camera_ready",
-    "get_camera_status", "stop_camera",
+    "is_file_input_mode", "get_camera_status", "stop_camera",
+    "capture_photo_file_input", "init_file_input_mode",
     # Pre-trained model downloader
-    "try_download_pretrained", "list_candidate_urls", "get_model_info",
+    "try_download_pretrained", "get_model_info", "get_download_url",
 ]

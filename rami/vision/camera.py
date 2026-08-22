@@ -1,26 +1,33 @@
-"""Robust Colab camera bridge with permission pre-warming.
+"""Robust camera + photo capture for Colab on iPad Safari.
 
-PROBLEM: The standard `getUserMedia` JS bridge only requests camera
-permission when called. If the JS isn't loaded yet, or the user clicks
-the capture button before the JS is ready, the permission prompt never
-appears — the photo call just returns null or hangs.
+PROBLEM:
+  On iPad Safari, getUserMedia() inside a Colab iframe is often blocked.
+  The permission prompt never appears, and capture_photo() returns None.
 
-SOLUTION: This module provides a single `prewarm_camera()` function
-that you call at notebook init. It:
-  1. Injects the JS bridge into the Colab page
-  2. Calls `getUserMedia` immediately to trigger the browser permission prompt
-  3. Keeps the stream alive in a hidden <video> element
-  4. Returns "granted" | "denied" | "unavailable"
+SOLUTION:
+  Two capture methods, tried in order:
 
-Once pre-warmed, `capture_photo()` just snapshots the running stream —
-no new permission prompt, no race condition.
+  1. getUserMedia stream (preferred, fast, live preview)
+     - Pre-warmed at notebook init via prewarm_camera()
+     - Snapshot from the running stream
+     - Works on Chrome desktop, Firefox, Android Chrome
+     - FAILS on iPad Safari in Colab iframe
 
-Usage:
-    from rami.vision.camera import prewarm_camera, capture_photo, is_camera_ready
+  2. <input type="file" accept="image/*" capture="environment">
+     - Falls back to native camera app
+     - User takes ONE photo per capture (no live preview)
+     - Works on iPad Safari, iPhone Safari, Android Chrome
+     - This is THE solution for iPad Safari
 
-    status = prewarm_camera()  # call in Cellule 1
-    if status == "granted":
-        img = capture_photo()  # call later, no permission prompt
+The notebook tries method 1 first. If prewarm_camera() returns 'denied'
+or 'unavailable', it switches to method 2 automatically.
+
+The user's flow in method 2:
+  - Click "📸 Capture photo"
+  - iPad's native Camera app opens
+  - User takes a photo of the table
+  - Photo is returned to the notebook
+  - Detection runs on the photo
 """
 from __future__ import annotations
 from typing import Optional, Literal
@@ -28,14 +35,14 @@ import base64
 import numpy as np
 
 
-CameraStatus = Literal["granted", "denied", "unavailable", "unknown"]
+CameraStatus = Literal["granted", "denied", "unavailable", "unknown", "file_input"]
 
 
-# Global state — set by prewarm_camera(), read by is_camera_ready()
 _CAMERA_STATUS: CameraStatus = "unknown"
 
 
-# The JS bridge code, injected once via IPython.display.Javascript
+# --- Method 1: getUserMedia stream ---
+
 _JS_BRIDGE = """
 window._ramiCamera = {
   stream: null,
@@ -53,7 +60,7 @@ window._ramiCamera = {
       this.status = 'granted';
       return 'granted';
     } catch (err) {
-      console.warn('Camera permission denied or unavailable:', err);
+      console.warn('getUserMedia failed:', err);
       this.status = 'denied';
       return 'denied';
     }
@@ -85,12 +92,9 @@ window._ramiCamera = {
 def prewarm_camera() -> CameraStatus:
     """Pre-warm the camera by requesting permission immediately.
 
-    Call this at the top of the notebook (Cellule 1). It triggers the
-    browser permission prompt BEFORE any photo button is clicked, so
-    the prompt actually appears.
-
-    Returns "granted" if the camera is ready, "denied" if the user
-    refused, "unavailable" if no camera detected.
+    Returns "granted" if getUserMedia works (Chrome, Firefox, Android).
+    Returns "denied" if blocked (iPad Safari in Colab iframe).
+    Returns "unavailable" if no camera or no JS bridge.
     """
     global _CAMERA_STATUS
     try:
@@ -101,70 +105,187 @@ def prewarm_camera() -> CameraStatus:
         return _CAMERA_STATUS
 
     try:
-        # Inject the JS bridge
         display(Javascript(_JS_BRIDGE))
-        # Small delay to let JS load
         import time
         time.sleep(0.5)
-        # Trigger the permission prompt
         status = eval_js("window._ramiCamera.prewarm()")
         _CAMERA_STATUS = status if status in ("granted", "denied") else "unknown"
+        if _CAMERA_STATUS == "denied":
+            # Fall back to file input method
+            _CAMERA_STATUS = "file_input"
         return _CAMERA_STATUS
-    except Exception as e:
+    except Exception:
         _CAMERA_STATUS = "unavailable"
         return _CAMERA_STATUS
 
 
 def is_camera_ready() -> bool:
-    """Check if the camera is ready to capture (prewarm_camera was called
-    and permission was granted)."""
+    """Check if getUserMedia stream is ready (method 1)."""
     return _CAMERA_STATUS == "granted"
 
 
+def is_file_input_mode() -> bool:
+    """Check if we're in file-input fallback mode (method 2, iPad Safari)."""
+    return _CAMERA_STATUS == "file_input"
+
+
 def get_camera_status() -> CameraStatus:
-    """Return the current camera status."""
     return _CAMERA_STATUS
 
 
 def capture_photo(quality: float = 0.85) -> Optional[np.ndarray]:
-    """Capture a photo from the running camera stream.
+    """Capture a photo.
 
-    Requires prewarm_camera() to have been called and granted.
+    Method 1 (getUserMedia): if is_camera_ready() is True, snapshot the stream.
+    Method 2 (file input): if is_file_input_mode() is True, fall back to
+                            capture_photo_file_input() which opens the native
+                            camera app.
 
-    Returns a numpy array (BGR format for OpenCV), or None if the
-    camera isn't ready.
+    Returns numpy array (BGR) or None.
     """
-    if not is_camera_ready():
+    if _CAMERA_STATUS == "granted":
+        return _capture_from_stream(quality)
+    elif _CAMERA_STATUS == "file_input":
+        return capture_photo_file_input()
+    else:
         return None
+
+
+def _capture_from_stream(quality: float = 0.85) -> Optional[np.ndarray]:
+    """Capture from the running getUserMedia stream (method 1)."""
     try:
         from IPython.display import Javascript, display
         from google.colab.output import eval_js
-    except ImportError:
-        return None
-
-    try:
         data_url = eval_js(f"window._ramiCamera.capture({quality})")
         if not data_url or data_url == "null":
             return None
-        # Strip the "data:image/jpeg;base64," prefix
         if "," in data_url:
             data_url = data_url.split(",", 1)[1]
         binary = base64.b64decode(data_url)
         arr = np.frombuffer(binary, dtype=np.uint8)
         import cv2
-        img = cv2.imdecode(arr, cv2.IMREAD_COLOR)
-        return img
+        return cv2.imdecode(arr, cv2.IMREAD_COLOR)
     except Exception:
         return None
 
 
+# --- Method 2: <input type="file" accept="image/*" capture="environment"> ---
+
+# This is the iPad Safari solution. It opens the native camera app,
+# the user takes a single photo, and the photo is returned to the notebook.
+#
+# Implementation: we use ipywidgets to create a file upload button with
+# capture=environment. When the user clicks it, iPad Safari opens the camera
+# app. When the photo is taken, it's returned as a base64 string.
+
+_FILE_INPUT_HTML = """
+<div id="rami-file-input-container">
+  <input type="file" id="rami-photo-input" accept="image/*" capture="environment"
+         style="display: none;">
+  <button id="rami-photo-button" onclick="document.getElementById('rami-photo-input').click()"
+          style="padding: 12px 24px; font-size: 16px; background: #007bff; color: white;
+                 border: none; border-radius: 6px; cursor: pointer;">
+    📸 Take Photo
+  </button>
+  <div id="rami-photo-status" style="margin-top: 8px; color: #666;"></div>
+</div>
+<script>
+window._ramiFilePhoto = {
+  data: null,
+  status: 'idle',
+
+  setup() {
+    const input = document.getElementById('rami-photo-input');
+    const status = document.getElementById('rami-photo-status');
+    input.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) {
+        status.textContent = 'No photo taken.';
+        return;
+      }
+      status.textContent = 'Processing photo...';
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        window._ramiFilePhoto.data = ev.target.result;
+        window._ramiFilePhoto.status = 'captured';
+        status.textContent = '✓ Photo captured (' + (file.size / 1024).toFixed(1) + ' KB)';
+      };
+      reader.readAsDataURL(file);
+    });
+  },
+
+  capture() {
+    window._ramiFilePhoto.data = null;
+    window._ramiFilePhoto.status = 'capturing';
+    document.getElementById('rami-photo-button').click();
+    return window._ramiFilePhoto.status;
+  },
+
+  get_data() {
+    return window._ramiFilePhoto.data;
+  },
+
+  get_status() {
+    return window._ramiFilePhoto.status;
+  }
+};
+window._ramiFilePhoto.setup();
+</script>
+"""
+
+
+def init_file_input_mode():
+    """Initialize the file-input HTML widget (call once when switching to
+    file_input mode)."""
+    from IPython.display import HTML, display
+    display(HTML(_FILE_INPUT_HTML))
+
+
+def capture_photo_file_input(timeout: int = 60) -> Optional[np.ndarray]:
+    """Capture a photo using the native camera app (method 2).
+
+    On iPad Safari, this opens the Camera app. The user takes a photo,
+    and it's returned to the notebook.
+
+    Polls for the photo data for up to `timeout` seconds.
+    """
+    from IPython.display import Javascript, display
+    from google.colab.output import eval_js
+    import time
+
+    # Trigger the file input dialog
+    eval_js("window._ramiFilePhoto.capture()")
+
+    # Poll for the result
+    start = time.time()
+    while time.time() - start < timeout:
+        status = eval_js("window._ramiFilePhoto.get_status()")
+        if status == "captured":
+            data_url = eval_js("window._ramiFilePhoto.get_data()")
+            if not data_url:
+                continue
+            if "," in data_url:
+                data_url = data_url.split(",", 1)[1]
+            try:
+                binary = base64.b64decode(data_url)
+                arr = np.frombuffer(binary, dtype=np.uint8)
+                import cv2
+                img = cv2.imdecode(arr, cv2.IMREAD_COLOR)
+                return img
+            except Exception:
+                return None
+        time.sleep(0.5)
+
+    return None
+
+
 def stop_camera() -> None:
-    """Stop the camera stream (releases the device)."""
     global _CAMERA_STATUS
-    try:
-        from IPython.display import Javascript, display
-        from google.colab.output import eval_js
-        eval_js("window._ramiCamera.stop()")
-    except Exception:
-        pass
+    if _CAMERA_STATUS == "granted":
+        try:
+            from IPython.display import Javascript, display
+            from google.colab.output import eval_js
+            eval_js("window._ramiCamera.stop()")
+        except Exception:
+            pass
     _CAMERA_STATUS = "stopped"
