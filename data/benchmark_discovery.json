@@ -1,0 +1,15 @@
+{
+  "games": 1000,
+  "opponent": "discovery",
+  "champion_wins": 364,
+  "opponent_wins": 112,
+  "stalemates": 524,
+  "champion_win_rate": 0.364,
+  "opponent_win_rate": 0.112,
+  "stalemate_rate": 0.524,
+  "decisive_win_rate": 0.7647058823529411,
+  "avg_game_length": 59.275,
+  "avg_score_delta": 53.28,
+  "elapsed_seconds": 51.730767011642456,
+  "champion_weights": "models/champion_weights.json"
+}
