@@ -29,8 +29,11 @@ Bonus : **Main humaine saisie manuellement** (grille cliquable) — l'iPad voit 
 ## Démarrage rapide (Google Colab)
 
 1. Ouvre le notebook `notebooks/ramai.ipynb` dans Google Colab (GPU gratuit).
-2. Exécute les cellules dans l'ordre (11 cellules numérotées + bonus).
-3. Pose ton iPad au-dessus de la table, autorise la caméra, joue.
+2. Exécute les cellules dans l'ordre.
+3. **Mode MANUEL par défaut** : aucun modèle YOLO à entraîner, aucune caméra requise. Tu joues en saisissant les cartes par grille cliquable.
+4. **Mode AUTO** (optionnel) : active la caméra, télécharge un modèle YOLO pré-entraîné si disponible, détecte les cartes automatiquement.
+
+Le mode MANUEL marche du premier coup. Le mode AUTO est le "vrai" projet vision.
 
 ## Les trois niveaux d'IA
 
@@ -47,10 +50,10 @@ Le Champion a été entraîné par **TD(0) self-play** avec une fonction de vale
 ### Tests unitaires
 ```
 $ cd /home/z/my-project/ramai-ai && python3 -m pytest tests/
-119 passed in 4.79s
+131 passed in 7.15s
 ```
 
-Répartition : 79 tests d'origine (cards, engine, config, 3 IA) + **40 tests sur les 7 problèmes du protocole** (Rami 51, meld extensions, joker designation, card counting, mandatory discard photo, calibration, discard detection).
+Répartition : 79 tests d'origine + 40 tests sur les 7 problèmes du protocole + 12 tests sur camera + mode MANUEL.
 
 ### Benchmark : Champion vs Discovery sur 1000 parties
 ```
@@ -71,14 +74,19 @@ L'erreur TD reste autour de 0.5 sur 6000 parties — la fonction de valeur liné
 
 ### Modèle de vision (YOLOv8)
 
-⚠ **Le modèle YOLO n'est pas pré-entraîné dans ce repo** — il doit être fine-tuné dans Colab à partir du dataset Kaggle "playing cards object detection" (76 classes). Le script `scripts/train_yolo.py` est fourni et produit un `models/yolo_cards.pt` + un mAP50 mesuré.
+Le notebook essaie de télécharger un modèle YOLO pré-entraîné depuis plusieurs URLs publiques (HuggingFace, GitHub releases, Roboflow). Si tous échouent, le notebook bascule en **mode MANUEL** (saisie par grille cliquable, aucune caméra requise).
 
 ```
-!pip install ultralytics
-!python scripts/train_yolo.py --data /content/cards.yaml --epochs 50
+mode MANUEL (par défaut) : marche du premier coup, sans modèle
+mode AUTO : tente de télécharger un modèle pré-entraîné
+  → si succès : détection caméra active
+  → si échec : bascule en MANUEL avec un message clair
 ```
 
-Aucun chiffre mAP n'est annoncé ici parce que le modèle n'a pas été entraîné sur la machine de développement (pas de GPU). L'utilisateur l'entraîne dans Colab et obtient son propre mAP50 (objectif : > 0.90).
+Aucun chiffre mAP n'est annoncé parce que le modèle n'est pas entraîné sur la machine de développement. Si tu veux entraîner ton propre modèle (30 min sur GPU Colab) :
+```
+!cd ramai-ai && python scripts/train_yolo.py --data /content/cards.yaml --epochs 50
+```
 
 ## Architecture
 
@@ -98,15 +106,17 @@ rami/
 │   └── champion.py
 └── vision/
     ├── detector.py
-    └── calibration.py # P6 (calibration caméra) + P7 (discard detection)
+    ├── camera.py      # prewarm_camera() — fixe le bug permission caméra
+    ├── pretrained.py  # try_download_pretrained() — modèle YOLO pré-entraîné
+    └── calibration.py # P6 (calibration) + P7 (discard detection)
 scripts/
 ├── train_champion.py
 ├── train_yolo.py
 ├── benchmark.py
 └── benchmark_batched.py
-tests/                 # 119 tests, pytest
+tests/                 # 131 tests, pytest
 notebooks/
-└── ramai.ipynb        # 25 cellules : 11 numérotées + bonus
+└── ramai.ipynb        # 23 cellules : 10 numérotées + bonus
 models/                # poids entraînés
 data/                  # courbes, benchmarks
 ```
