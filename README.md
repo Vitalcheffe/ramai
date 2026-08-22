@@ -22,7 +22,7 @@ Le Rami est joué par des centaines de millions de personnes à travers le monde
 |--------|-------------|-------|
 | **Découverte** | Règles pures, aucun comptage | Débutant |
 | **Stratégie** | Comptage parfait + probabilités | Intermédiaire |
-| **Champion** | RL self-play TD(0), 3000+ parties | Avancé |
+| **Champion** | RL self-play TD(0), 6000 parties | Avancé |
 
 Le Champion a été entraîné par **TD(0) self-play** avec une fonction de valeur linéaire sur 16 features.
 
@@ -47,6 +47,10 @@ Score moyen: +53.3 pts (Champion - Discovery)
 ```
 
 Le taux de stalemates élevé (52%) reflète un problème réel : avec un seuil de première pose à 30 points et un stock de 80 cartes, les deux IA peinent à vider leur main. Les 476 parties **décisives** montrent que le Champion bat clairement Discovery (76.5% de victoires).
+
+### Courbe d'apprentissage du Champion (TD error)
+
+L'erreur TD reste autour de 0.5 sur 6000 parties — la fonction de valeur linéaire converge lentement. Le Champion joue néanmoins mieux que Discovery (76.5% de victoires décisives), ce qui suggère que les features captent suffisamment le signal pour améliorer la politique même si V(s) reste imprécis. Aller au-delà nécessiterait un réseau neuronal (PyTorch) à la place de la fonction linéaire.
 
 ### Modèle de vision (YOLOv8)
 
