@@ -1,0 +1,18 @@
+name: Bug report
+description: Report a bug in ramai
+labels: ["bug"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the bug and how to reproduce it
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Python version
+      placeholder: "3.12"
+    validations:
+      required: true
