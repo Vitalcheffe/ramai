@@ -37,7 +37,7 @@ class RamiConfig:
 
     # Stalemate protection: if no meld is laid for N consecutive turns,
     # game ends and lowest-deadwood player wins.
-    stalemate_turns: int = 50
+    stalemate_turns: int = 30
 
     # Allow extending existing laid melds (e.g. add 4♥ to opponent's 5-6-7♥)
     allow_meld_extensions: bool = True

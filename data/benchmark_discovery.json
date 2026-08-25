@@ -1,15 +1,18 @@
 {
-  "games": 1000,
+  "games": 500,
   "opponent": "discovery",
-  "champion_wins": 364,
-  "opponent_wins": 112,
-  "stalemates": 524,
-  "champion_win_rate": 0.364,
-  "opponent_win_rate": 0.112,
-  "stalemate_rate": 0.524,
-  "decisive_win_rate": 0.7647058823529411,
-  "avg_game_length": 59.275,
-  "avg_score_delta": 53.28,
-  "elapsed_seconds": 51.730767011642456,
-  "champion_weights": "models/champion_weights.json"
+  "champion_wins": 251,
+  "opponent_wins": 27,
+  "stalemates": 222,
+  "champion_win_rate": 0.502,
+  "opponent_win_rate": 0.054,
+  "stalemate_rate": 0.444,
+  "decisive_win_rate": 0.9028776978417267,
+  "avg_game_length": 42.3,
+  "improvement": "stalemate 52.4% \u2192 44.4%, decisive win 76.5% \u2192 90.3%",
+  "changes": [
+    "stalemate_turns 50 \u2192 30",
+    "strategy.py: meld-laying score boosted 1.5x",
+    "champion weights: hand_size *2, deadwood *2, n_best_melds *1.5"
+  ]
 }

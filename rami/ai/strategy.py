@@ -43,9 +43,9 @@ class StrategyAI(AI):
         def move_score(m: Move) -> float:
             score = 0.0
 
-            # Reward for laying melds (points = real progress)
+            # lay melds aggressively — reduces deadwood
             for meld in m.laydowns:
-                score += meld_points(meld, cfg)
+                score += meld_points(meld, cfg) * 1.5
 
             # Compute resulting hand after move
             remaining = self._hand_after(ctx.my_hand, m, ctx.state)
