@@ -18,7 +18,6 @@ from .config import RamiConfig
 Meld = Tuple[Card, ...]   # an ordered tuple of cards forming a legal meld
 
 
-# ---------- Single-meld validation ----------
 
 def is_valid_group(cards: Sequence[Card], cfg: RamiConfig) -> bool:
     non_joker = [c for c in cards if not c.is_joker]
@@ -106,7 +105,6 @@ def is_valid_meld(cards: Sequence[Card], cfg: RamiConfig) -> bool:
     return is_valid_group(cards, cfg) or is_valid_run(cards, cfg)
 
 
-# ---------- Meld enumeration ----------
 
 def valid_melds(cards: Iterable[Card], cfg: RamiConfig) -> List[Meld]:
     """Every legal meld that can be formed from a subset of `cards`.
@@ -180,7 +178,6 @@ def valid_melds(cards: Iterable[Card], cfg: RamiConfig) -> List[Meld]:
     return out
 
 
-# ---------- First-meld threshold ----------
 
 def meld_points(meld: Sequence[Card], cfg: RamiConfig) -> int:
     return sum(cfg.card_value(c.rank) for c in meld if not c.is_joker)
@@ -196,7 +193,6 @@ def can_lay_first(melds: Sequence[Sequence[Card]], cfg: RamiConfig) -> bool:
     return first_meld_score(melds, cfg) >= cfg.first_meld_threshold
 
 
-# ---------- Laydown enumeration (all melds you can lay in one turn) ----------
 
 def valid_laydowns(hand: Sequence[Card],
                   cfg: RamiConfig,
@@ -239,7 +235,6 @@ def valid_laydowns(hand: Sequence[Card],
     return results
 
 
-# ---------- Deadwood (cards not in any meld) ----------
 
 def best_meld_partition(hand: Sequence[Card], cfg: RamiConfig) -> Tuple[List[Meld], List[Card]]:
     """Greedy best partition of hand into melds + deadwood.
