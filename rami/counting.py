@@ -62,12 +62,10 @@ class CardCountingState:
                 self.visible_cards.add((card.suit, card.rank, card.copy_id))
 
     def record_discard(self, player: int, card: Card) -> None:
-        """Record a discard event. Discards are always visible."""
         self.discards_by_player[player].append(card)
         self.visible_cards.add((card.suit, card.rank, card.copy_id))
 
     def record_meld(self, player: int, meld: Tuple[Card, ...]) -> None:
-        """Record a laid meld. Melds are always visible."""
         self.laid_melds_count[player] += len(meld)
         for c in meld:
             self.visible_cards.add((c.suit, c.rank, c.copy_id))
@@ -88,7 +86,6 @@ class CardCountingState:
                 - self.laid_melds_count.get(player, 0))
 
     def is_opponent_empty(self, opponent_idx: int) -> bool:
-        """Detect that the opponent has gone out (hand size = 0)."""
         return self.hand_count(opponent_idx) == 0
 
     def unseen_cards(self, cfg: RamiConfig) -> Set[Tuple[int, int, int]]:

@@ -291,7 +291,6 @@ def find_meld_extensions(card: Card,
 
 
 def all_laid_melds(state) -> List[Tuple[int, int, Tuple[Card, ...]]]:
-    """Flatten all players' laid melds into a list."""
     out = []
     for p_idx, p in enumerate(state.players):
         for m_idx, meld in enumerate(p.laid_melds):

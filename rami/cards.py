@@ -36,7 +36,6 @@ class Card:
 
 
 def build_deck(cfg: RamiConfig, seed: Optional[int] = None) -> List[Card]:
-    """Construct the full deck per config. NOT shuffled."""
     cards: List[Card] = []
     for copy_id in range(cfg.num_decks):
         for s in range(cfg.num_suits):

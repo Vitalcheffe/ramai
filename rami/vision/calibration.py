@@ -103,7 +103,6 @@ def calibrate_camera(image: np.ndarray,
 
 
 def cv2_getPerspectiveTransform(src, dst):
-    """Lazy import of cv2.getPerspectiveTransform so this module loads without cv2."""
     import cv2
     return cv2.getPerspectiveTransform(src, dst)
 

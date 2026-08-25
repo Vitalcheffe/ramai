@@ -43,7 +43,6 @@ def try_download_pretrained(out_path: str = "models/yolov8n.pt",
 
 
 def get_model_info(path: str) -> dict:
-    """Return basic info about a downloaded model file."""
     if not os.path.exists(path):
         return {"exists": False}
     size = os.path.getsize(path)
@@ -59,5 +58,4 @@ def get_model_info(path: str) -> dict:
 
 
 def get_download_url() -> str:
-    """Return the canonical download URL."""
     return DOWNLOAD_URL

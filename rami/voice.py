@@ -18,7 +18,6 @@ class Voice:
         self._init_browser()
 
     def _init_browser(self) -> None:
-        """Initialize the browser speechSynthesis (inject JS check)."""
         if not self.use_browser:
             self._browser_available = False
             return
@@ -64,7 +63,6 @@ class Voice:
         return record
 
     def _try_browser(self, text: str) -> bool:
-        """Try to speak via the browser's speechSynthesis API."""
         if not self._browser_available:
             return False
         try:
@@ -80,7 +78,6 @@ class Voice:
             return False
 
     def _try_gtts(self, text: str) -> bool:
-        """Fallback: generate audio via gTTS and play it."""
         try:
             from gtts import gTTS
             from IPython.display import Audio, display
@@ -104,7 +101,6 @@ class Voice:
             return False
 
     def cancel(self) -> None:
-        """Stop any ongoing speech."""
         if self._browser_available:
             try:
                 from google.colab.output import eval_js
@@ -113,16 +109,13 @@ class Voice:
                 pass
 
     def history(self) -> list[dict]:
-        """Return the full voice history (for the report)."""
         return list(self._history)
 
     def last_phrases(self, n: int = 10) -> list[dict]:
-        """Return the last N spoken phrases."""
         return self._history[-n:]
 
 
 def speak_sequence(phrases: list[str]) -> list[dict]:
-    """Convenience: speak a sequence of phrases, return the history."""
     v = Voice()
     for p in phrases:
         v.say(p)

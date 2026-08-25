@@ -319,6 +319,5 @@ def should_show_ai_hand(ai_level: str) -> bool:
 
 
 def show_ai_hand_warning() -> str:
-    """Warning shown when user clicks 'triche' to reveal AI hand."""
     return ("⚠ Tu vas voir les cartes de RAMAI. "
             "C'est de la triche. Clique à nouveau pour confirmer.")

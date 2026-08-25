@@ -173,7 +173,6 @@ def start_stream() -> StreamStatus:
 
 
 def _frame_puller() -> None:
-    """Background thread: pulls latest frame from JS into Python."""
     global _LATEST_FRAME
     try:
         from google.colab.output import eval_js
@@ -199,7 +198,6 @@ def _frame_puller() -> None:
 
 
 def get_latest_frame() -> Optional[np.ndarray]:
-    """Return the latest captured frame (numpy array, BGR) or None."""
     with _FRAME_LOCK:
         if _LATEST_FRAME is not None:
             return _LATEST_FRAME.copy()
@@ -207,7 +205,6 @@ def get_latest_frame() -> Optional[np.ndarray]:
 
 
 def get_frame_number() -> int:
-    """Return the current frame counter from JS."""
     if _STREAM_STATUS != "streaming":
         return 0
     try:
@@ -238,7 +235,6 @@ def is_streaming() -> bool:
 
 
 def stop_stream() -> None:
-    """Stop the stream and clean up."""
     global _STREAM_STATUS
     _STOP_FLAG.set()
     if _STREAM_THREAD:

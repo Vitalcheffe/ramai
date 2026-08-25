@@ -117,7 +117,6 @@ class StrategyAI(AI):
         return out
 
     def _useful_card_keys(self, hand: List[Card], cfg: RamiConfig) -> Set[Tuple[int, int]]:
-        """Return set of (suit, rank) keys that would reduce deadwood if added."""
         useful: Set[Tuple[int, int]] = set()
         # Cards that extend an existing 2-card partial meld
         for c in hand:
@@ -143,7 +142,6 @@ class StrategyAI(AI):
         return useful
 
     def _hand_after(self, hand: List[Card], move: Move, state: GameState) -> List[Card]:
-        """Compute hand after applying move (without mutating state)."""
         # Add drawn card
         if move.draw_source == "stock":
             drawn = state.stock[-1] if state.stock else None

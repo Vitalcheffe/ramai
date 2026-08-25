@@ -62,7 +62,6 @@ class MockDetector:
 
 
 def _parse_class_name(name: str) -> Tuple[str, str]:
-    """Convert YOLO class name to (rank, suit)."""
     if name.lower().startswith("joker"):
         return ("Joker", "★")
     # Names look like "A♠", "10♥", "2♦", "K♣"

@@ -61,7 +61,6 @@ class Move:
 
 
 def legal_moves(state: GameState) -> List[Move]:
-    """Enumerate all legal moves for the current player."""
     player = state.current_player
     cfg = state.cfg
     moves: List[Move] = []
@@ -122,7 +121,6 @@ def legal_moves(state: GameState) -> List[Move]:
 
 
 def apply_move(state: GameState, move: Move) -> GameState:
-    """Mutate state by applying move. Returns same state for chaining."""
     player = state.current_player
     cfg = state.cfg
 

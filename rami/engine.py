@@ -21,7 +21,6 @@ Meld = Tuple[Card, ...]   # an ordered tuple of cards forming a legal meld
 # ---------- Single-meld validation ----------
 
 def is_valid_group(cards: Sequence[Card], cfg: RamiConfig) -> bool:
-    """3+ cards same rank, distinct suits (unless config allows dupes)."""
     non_joker = [c for c in cards if not c.is_joker]
     jokers = [c for c in cards if c.is_joker]
     if len(cards) < cfg.min_meld_size:
@@ -49,7 +48,6 @@ def _rank_value_high(r: int) -> int:
 
 
 def is_valid_run(cards: Sequence[Card], cfg: RamiConfig) -> bool:
-    """3+ cards same suit, consecutive ranks. Aces low/high per config."""
     non_joker = [c for c in cards if not c.is_joker]
     jokers = [c for c in cards if c.is_joker]
     if len(cards) < cfg.min_meld_size:
@@ -72,7 +70,6 @@ def is_valid_run(cards: Sequence[Card], cfg: RamiConfig) -> bool:
 
 
 def _run_fits(ranks: List[int], jokers_len: int, ace_high: bool, wrap: bool) -> bool:
-    """Check if sorted ranks + jokers form a consecutive sequence."""
     # Convert: A=14 if ace_high and rank==1
     vals = sorted((_rank_value_high(r) if (ace_high and r == 1) else _rank_value_low(r)) for r in ranks)
     # Need to fill gaps with jokers
@@ -185,7 +182,6 @@ def valid_melds(cards: Iterable[Card], cfg: RamiConfig) -> List[Meld]:
 # ---------- First-meld threshold ----------
 
 def meld_points(meld: Sequence[Card], cfg: RamiConfig) -> int:
-    """Points a meld is worth (for first-meld threshold)."""
     return sum(cfg.card_value(c.rank) for c in meld if not c.is_joker)
 
 

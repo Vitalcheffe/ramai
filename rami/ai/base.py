@@ -53,7 +53,6 @@ class AI(ABC):
         ...
 
     def decide(self, state: GameState) -> Move:
-        """Public entry point: takes a game state, returns a legal Move."""
         moves = legal_moves(state)
         if not moves:
             raise RuntimeError("no legal moves")

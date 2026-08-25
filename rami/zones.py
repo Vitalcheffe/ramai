@@ -24,7 +24,6 @@ class ZoneBox:
     y2: int
 
     def contains(self, bbox: Tuple[float, float, float, float]) -> bool:
-        """Check if a detection bbox (x1,y1,x2,y2) is mostly inside this zone."""
         cx = (bbox[0] + bbox[2]) / 2
         cy = (bbox[1] + bbox[3]) / 2
         return (self.x1 <= cx <= self.x2 and self.y1 <= cy <= self.y2)
@@ -59,7 +58,6 @@ class ZoneMap:
         return self.zones.get(name)
 
     def which(self, bbox: Tuple[float, float, float, float]) -> Optional[ZoneName]:
-        """Which zone does this detection bbox fall into?"""
         for name, box in self.zones.items():
             if box.contains(bbox):
                 return name
@@ -138,7 +136,6 @@ def cards_in_zone(detections, zone_name: ZoneName,
 
 
 def slot_number_for_detection(detection, zone_map: ZoneMap) -> Optional[int]:
-    """For a detection in ZONE_IA, return the slot number (1-15)."""
     box = zone_map.get(ZoneName.ZONE_IA)
     if box is None:
         return None
@@ -146,7 +143,6 @@ def slot_number_for_detection(detection, zone_map: ZoneMap) -> Optional[int]:
 
 
 def draw_zones_overlay(image: np.ndarray, zone_map: ZoneMap) -> np.ndarray:
-    """Draw the zone boxes on a copy of the image (for debug display)."""
     import cv2
     out = image.copy()
     zone_colors = {

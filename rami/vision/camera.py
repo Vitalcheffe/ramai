@@ -90,12 +90,10 @@ def prewarm_camera() -> CameraStatus:
 
 
 def is_camera_ready() -> bool:
-    """Check if getUserMedia stream is ready (method 1)."""
     return _CAMERA_STATUS == "granted"
 
 
 def is_file_input_mode() -> bool:
-    """Check if we're in file-input fallback mode (method 2, iPad Safari)."""
     return _CAMERA_STATUS == "file_input"
 
 
@@ -122,7 +120,6 @@ def capture_photo(quality: float = 0.85) -> Optional[np.ndarray]:
 
 
 def _capture_from_stream(quality: float = 0.85) -> Optional[np.ndarray]:
-    """Capture from the running getUserMedia stream (method 1)."""
     try:
         from IPython.display import Javascript, display
         from google.colab.output import eval_js
