@@ -1,26 +1,4 @@
-"""Game sheet zones — calibration + zone-based detection.
-
-The printed A4 sheet defines 5 fixed zones:
-  - MONTRE     : show one card face-up to the camera
-  - ZONE IA    : AI's hand, 15 numbered slots, face-down
-  - TALON      : face-down stock
-  - DEFAUSSE   : face-up discard pile
-  - CENTRE     : melds laid by both players
-
-At startup, the camera takes a photo of the empty sheet. The zones
-are located by their printed borders (dark rectangles on light
-background). Each zone's bounding box is stored.
-
-During the game, every detection is filtered by zone: a card detected
-inside MONTRE is a "show", a card inside CENTRE is a meld card, etc.
-
-This module:
-  1. Defines the 5 zones (in sheet coordinates, normalized to A4 ratio)
-  2. calibrate_zones(image) — finds the sheet corners and maps zones
-     to image pixel coordinates
-  3. which_zone(bbox, zone_map) — classifies a detection into a zone
-  4. cards_in_zone(detections, zone_name, zone_map) — filters detections
-"""
+"""Game sheet zones — calibration + zone-based detection."""
 from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum

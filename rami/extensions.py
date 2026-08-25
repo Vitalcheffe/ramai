@@ -1,18 +1,4 @@
-"""Meld extensions + joker designation.
-
-P2: Allow extending an existing laid meld.
-    Example: opponent laid 5♥-6♥-7♥. If I have 4♥ (and I've passed my
-    first-meld threshold), I can lay 4♥ on the table next to that meld,
-    extending it to 4♥-5♥-6♥-7♥. The card counts as part of the meld
-    for end-of-game scoring.
-
-P3: Joker designation.
-    When a joker is used in a meld, the rules of Rami require the player
-    to declare what card the joker represents. We compute that
-    automatically from the surrounding cards: e.g. in meld [5♥, ★, 7♥]
-    the joker represents 6♥. The result is exposed so the player knows
-    which physical card to play on top of it if they extend the meld later.
-"""
+"""Meld extensions + joker designation."""
 from __future__ import annotations
 from typing import List, Optional, Tuple, Sequence
 from dataclasses import dataclass
@@ -224,7 +210,6 @@ def _designate_jokers_in_run(sorted_nj: List[Card], jokers: List[Card],
     return designations
 
 
-# ---------- P2: Meld extensions ----------
 
 @dataclass
 class MeldExtension:

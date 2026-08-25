@@ -1,20 +1,4 @@
-"""AI voice channel — French speech synthesis with gTTS fallback.
-
-Primary: browser speechSynthesis (instant, free, no API key).
-Fallback: gTTS (Google Text-to-Speech) + IPython.display.Audio, used
-when the browser doesn't have speechSynthesis or when running in a
-context that mutes it (some Colab iframes).
-
-Every spoken phrase is ALSO printed to the notebook output, so the
-game is playable in silence and accessible.
-
-Usage:
-    from rami.voice import Voice
-    v = Voice()
-    v.say("9 de pique. Range-le face cachée en position 12.")
-    # → printed: "[voice] 9 de pique..."
-    # → spoken via speechSynthesis in the browser
-"""
+"""Voice — French speech synthesis with gTTS fallback."""
 from __future__ import annotations
 from typing import Optional
 import time

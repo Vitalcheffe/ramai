@@ -1,16 +1,4 @@
-"""Champion AI — linear value function over hand-crafted features,
-trained by self-play TD(0).
-
-Not deep RL (no neural net — would need torch on GPU and we're in a
-Colab-free CLI). Instead: a linear function approximator
-    V(s) = w · φ(s)
-where φ(s) is a 16-dim feature vector summarising the game state from
-the current player's perspective. Weights are learned by temporal-
-difference bootstrapping during self-play.
-
-Despite its simplicity, this beats Discovery by a wide margin — see
-the benchmark output (data/benchmark_1000.json).
-"""
+"""Champion AI — linear value function, TD(0) self-play."""
 from __future__ import annotations
 from typing import List, Tuple, Optional
 import json

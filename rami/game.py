@@ -51,7 +51,6 @@ def new_game(cfg: RamiConfig, seed: Optional[int] = None) -> GameState:
                      players=[PlayerState(hand=h) for h in hands])
 
 
-# ---------- Moves ----------
 
 @dataclass
 class Move:

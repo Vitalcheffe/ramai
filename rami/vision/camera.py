@@ -1,34 +1,4 @@
-"""Robust camera + photo capture for Colab on iPad Safari.
-
-PROBLEM:
-  On iPad Safari, getUserMedia() inside a Colab iframe is often blocked.
-  The permission prompt never appears, and capture_photo() returns None.
-
-SOLUTION:
-  Two capture methods, tried in order:
-
-  1. getUserMedia stream (preferred, fast, live preview)
-     - Pre-warmed at notebook init via prewarm_camera()
-     - Snapshot from the running stream
-     - Works on Chrome desktop, Firefox, Android Chrome
-     - FAILS on iPad Safari in Colab iframe
-
-  2. <input type="file" accept="image/*" capture="environment">
-     - Falls back to native camera app
-     - User takes ONE photo per capture (no live preview)
-     - Works on iPad Safari, iPhone Safari, Android Chrome
-     - This is THE solution for iPad Safari
-
-The notebook tries method 1 first. If prewarm_camera() returns 'denied'
-or 'unavailable', it switches to method 2 automatically.
-
-The user's flow in method 2:
-  - Click "📸 Capture photo"
-  - iPad's native Camera app opens
-  - User takes a photo of the table
-  - Photo is returned to the notebook
-  - Detection runs on the photo
-"""
+"""Camera capture — prewarm + iPad Safari fallback."""
 from __future__ import annotations
 from typing import Optional, Literal
 import base64

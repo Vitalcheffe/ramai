@@ -1,33 +1,4 @@
-"""Adversary card counting — track what the opponent holds without seeing it.
-
-The AI only sees:
-  - its own hand (always visible)
-  - the discard pile (face up)
-  - all laid melds (face up)
-  - cards it has drawn itself (visible at draw time)
-  - cards the opponent has discarded (face up)
-  - initial hand size (= cfg.hand_size)
-
-The AI does NOT see:
-  - the opponent's current hand
-  - the unrevealed stock (except its size)
-  - cards the opponent drew from stock (until they're laid or discarded)
-
-From the visible cards, we can compute:
-  - the set of UNSEEN cards (= full_deck - visible)
-  - the count of cards the opponent holds (= initial_hand_size
-                                            + draws_from_stock
-                                            + draws_from_discard
-                                            - discards
-                                            - laid_meld_cards)
-
-If our arithmetic is correct, we know exactly how many cards the opponent
-holds at any moment. Combined with the unseen set, we can compute the
-probability of drawing each card from the stock.
-
-End-of-game detection: if opponent's hand count reaches 0, the opponent
-has won (or the stock ran out, which the game state already tracks).
-"""
+"""Card counting — track opponent hand by arithmetic."""
 from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Dict, List, Set, Tuple, Optional

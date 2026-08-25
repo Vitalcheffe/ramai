@@ -1,16 +1,4 @@
-"""Pre-trained YOLO model downloader.
-
-Downloads from the project's own GitHub release. This URL is permanent
-and reliable (unlike ad-hoc HuggingFace/Roboflow mirrors).
-
-Release URL:
-  https://github.com/VitalCheffe/ramai/releases/download/v0.1.0-vision-bootstrap/yolov8n.pt
-
-This is the YOLOv8n COCO-pretrained backbone. To get a CARDS-specific
-model, the user runs notebooks/train_yolo.ipynb in Colab (30 min on
-free GPU), then uploads the resulting best.pt to a new release
-v0.2.0-cards and updates DOWNLOAD_URL below.
-"""
+"""Pre-trained model downloader — GitHub release URL."""
 from __future__ import annotations
 import os
 import urllib.request

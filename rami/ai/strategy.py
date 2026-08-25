@@ -1,34 +1,4 @@
-"""Strategy AI — perfect card counting + probability-aware scoring.
-
-This AI tracks every card that has been visible:
-  - its own hand (always visible)
-  - the entire discard pile (face up)
-  - all melds laid by both players (face up)
-  - cards it has drawn from stock (visible at draw time)
-
-It NEVER sees the opponent's hidden hand or the unrevealed stock.
-
-From the visible cards, it computes the set of "unseen" cards:
-    unseen = full_deck - (my_hand ∪ discard_pile ∪ all_melds ∪ drawn_from_stock)
-
-The unseen cards are either in the stock or in the opponent's hand.
-For probability of drawing a useful card from the stock, we use:
-    P(useful | draw from stock) = count(useful in unseen) / |unseen|
-
-For "useful" we mean: a card that, if added to the hand, would reduce
-deadwood by at least one point (i.e., it fits an existing partial meld
-or completes a new one).
-
-Decision logic:
-  1. Compute "value of discard" — if drawing it lets us lay ≥1 meld or
-     strictly reduces deadwood, take it. Weight by probability the
-     opponent might want it (lower value if opponent has few cards).
-  2. Else draw from stock.
-  3. Among laydown options, pick the one maximising "expected score gain
-     next turn" = points laid - deadwood_increase + α * P(draw useful).
-  4. Discard the card whose removal minimises deadwood AND maximises
-     the chance the opponent can use it (i.e., throw "cold" cards).
-"""
+"""Strategy AI — card counting + probability scoring."""
 from __future__ import annotations
 from typing import List, Set, Tuple, Optional
 from collections import Counter

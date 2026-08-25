@@ -1,15 +1,4 @@
-"""YOLOv8 card detector wrapper. Imports torch lazily.
-
-Usage in Colab (after training):
-    from rami.vision import CardDetector
-    det = CardDetector(weights_path="models/yolo_cards.pt")
-    detections = det.predict(image_array)
-    for d in detections:
-        print(d.rank, d.suit, d.confidence)
-
-In CLI (no torch installed): falls back to MockDetector so the rest of
-the notebook can still be exercised.
-"""
+"""YOLOv8 card detector wrapper + mock fallback."""
 from __future__ import annotations
 from dataclasses import dataclass
 from typing import List, Optional, Tuple

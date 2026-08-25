@@ -1,20 +1,4 @@
-"""The Protocol — how the human and the machine exchange moves through
-a physical table and a deck of cards.
-
-This module defines the SEQUENCE OF EVENTS for one turn of the game.
-It is the contract between the notebook (UI) and the engine (rules).
-
-The protocol is driven by `ProtocolStep` enums. The notebook calls
-`next_step(state, counting, last_action)` to know what to ask the user
-for next. Each step has:
-  - a prompt (what to display to the human)
-  - an expected input type (photo, click, none)
-  - a handler that processes the input and updates the state
-
-KEY INVARIANT: the discard pile MUST be photographed at the end of every
-turn. If the photo is missing or fails recognition, the protocol refuses
-to proceed. This is the single point of failure for card counting.
-"""
+"""Turn protocol — mandatory discard photo enforcement."""
 from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum, auto
@@ -323,7 +307,6 @@ def _prompt_for(step: ProtocolStep, ctx: TurnContext,
     return ProtocolPrompt(step=step, message="?", input_type="none")
 
 
-# ---------- Visibility policy for AI hand ----------
 
 def should_show_ai_hand(ai_level: str) -> bool:
     """Whether the notebook should display RAMAI's hand by default.

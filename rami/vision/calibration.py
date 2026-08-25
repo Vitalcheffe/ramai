@@ -1,21 +1,4 @@
-"""Vision pipeline for Rami: camera calibration, discard detection, meld cluster detection.
-
-P6: Camera calibration
-    - User points camera at table (iPad propped against a book, ~30° tilt)
-    - We compute the homography from the table's 4 corners
-    - If corners are well-detected and the perspective transform is reasonable
-      (not too skewed), we display a green frame. Otherwise red.
-
-P7: Discard detection (mandatory photo at end of turn)
-    - Focus on the discard pile region only
-    - Verify exactly 1 card is detected (the top)
-    - If 0 or 2+ cards detected, refuse and re-prompt
-
-P7b: Meld cluster detection
-    - Detect all cards on the table
-    - Group cards that are spatially close (< 1.5 × card-width apart)
-    - Each cluster = a meld (or pile of deadwood if not recognized)
-"""
+"""Camera calibration + discard detection + meld clusters."""
 from __future__ import annotations
 from dataclasses import dataclass
 from typing import List, Optional, Tuple
@@ -51,7 +34,6 @@ class MeldCluster:
     bbox: Tuple[float, float, float, float]
 
 
-# ---------- P6: Camera calibration ----------
 
 def calibrate_camera(image: np.ndarray,
                      table_corners: Optional[Tuple[Tuple[int, int],
@@ -126,7 +108,6 @@ def cv2_getPerspectiveTransform(src, dst):
     return cv2.getPerspectiveTransform(src, dst)
 
 
-# ---------- P7: Discard detection ----------
 
 def detect_discard_pile(detector, image: np.ndarray,
                          region: Optional[Tuple[int, int, int, int]] = None) -> DiscardDetection:
@@ -187,7 +168,6 @@ def detect_discard_pile(detector, image: np.ndarray,
     )
 
 
-# ---------- P7b: Meld cluster detection ----------
 
 def detect_meld_clusters(detector, image: np.ndarray,
                           card_distance_threshold: float = 1.5) -> List[MeldCluster]:

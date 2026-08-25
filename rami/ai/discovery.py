@@ -1,13 +1,4 @@
-"""Discovery AI — pure heuristics, no card counting.
-
-Strategy:
-  1. If drawing the discard completes any meld in hand, take it.
-  2. Else draw from stock (avoid giving info to opponent).
-  3. Lay any meld that's "complete and pure" (no jokers if avoidable).
-  4. Discard the highest-value card not contributing to a partial meld.
-
-Goal: play valid moves, never blunder. Good sparring partner for beginners.
-"""
+"""Discovery AI — heuristic rules only."""
 from __future__ import annotations
 from typing import List, Tuple
 import random

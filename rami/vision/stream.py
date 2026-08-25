@@ -1,21 +1,4 @@
-"""Live video stream from Colab output via getUserMedia bridge.
-
-This is the heart of the croupier architecture. A continuous video
-stream is displayed in the notebook output, frames are pulled into
-Python at 2-5 FPS for detection, and the user sees themselves live
-while the AI watches the table.
-
-Architecture:
-  - JS bridge injects a <video> element + <canvas> into the page
-  - The <video> plays the getUserMedia stream live (user sees themselves)
-  - Every 200-500ms, JS encodes the current frame as base64 JPEG
-  - Python polls for the latest frame via eval_js
-  - The frame is decoded into a numpy array for OpenCV/YOLO
-
-If getUserMedia is blocked (iPad Safari in iframe), the module falls
-back to file-input mode: each capture_photo() opens the native camera
-app and returns a single photo.
-"""
+"""Live video stream — getUserMedia + frame puller."""
 from __future__ import annotations
 from typing import Optional, Literal
 import base64
