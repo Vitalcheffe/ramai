@@ -1,13 +1,4 @@
-"""Rami rules engine — config-driven. No AI lives here.
-
-Public API:
-  - valid_melds(cards, cfg)        → enumerate every legal meld subset
-  - first_meld_score(melds, cfg)    → points scored by laying down these melds
-  - can_lay_first(melds, cfg)       → does this set of melds clear threshold?
-  - valid_laydowns(hand, cfg, first_meld_done) → enumerate legal move sets
-  - deadwood_score(hand, cfg)       → penalty for unmelded cards left in hand
-  - find_meld_for_card(card, hand, cfg) → melds in hand containing this card
-"""
+"""Rami rules engine — config-driven."""
 from __future__ import annotations
 from itertools import combinations
 from typing import Iterable, List, Optional, Sequence, Tuple
