@@ -37,6 +37,7 @@ class MeldCluster:
 
 def calibrate_camera(image: np.ndarray,
                      table_corners: Optional[Tuple[Tuple[int, int],
+    # TODO: zone calibration assumes sheet fills the frame
                                                    Tuple[int, int],
                                                    Tuple[int, int],
                                                    Tuple[int, int]]] = None) -> CalibrationResult:

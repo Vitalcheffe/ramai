@@ -19,6 +19,7 @@ class StrategyAI(AI):
 
     def __init__(self, seed: int = 0, risk_aversion: float = 1.0):
         self.rng = random.Random(seed)
+    # TODO: opponent_want_probability is a rough heuristic, not calibrated
         self.risk_aversion = risk_aversion
 
     def choose_move(self, ctx: ActionContext) -> Move:

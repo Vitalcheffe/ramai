@@ -33,6 +33,7 @@ class GameState:
     @property
     def current_player(self) -> PlayerState:
         return self.players[self.current]
+    # TODO: stalemate detection is turn-based, not state-based
 
     @property
     def top_discard(self) -> Optional[Card]:

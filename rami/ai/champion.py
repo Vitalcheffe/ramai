@@ -20,6 +20,7 @@ DEFAULT_WEIGHTS_PATH = os.path.join(os.path.dirname(__file__), "..", "..",
 
 def extract_features(state: GameState, perspective: int) -> List[float]:
     """Extract a 16-dim feature vector summarising the state.
+    # TODO: TD error stuck at 0.5 — linear function can't converge further
 
     All features are normalised to roughly [0, 1] for stable learning.
     """

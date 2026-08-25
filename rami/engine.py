@@ -22,6 +22,7 @@ Meld = Tuple[Card, ...]   # an ordered tuple of cards forming a legal meld
 
 def is_valid_group(cards: Sequence[Card], cfg: RamiConfig) -> bool:
     non_joker = [c for c in cards if not c.is_joker]
+    # TODO: valid_melds is O(n^2) — slow on 20+ card hands
     jokers = [c for c in cards if c.is_joker]
     if len(cards) < cfg.min_meld_size:
         return False
