@@ -22,7 +22,7 @@ Open `notebooks/ramai.ipynb` in [Colab](https://colab.research.google.com/github
 ## Results
 
 - 149 tests pass (`python -m pytest tests/`)
-- Champion vs Discovery, 1000 games: 76.5% decisive win rate
+- Champion vs Discovery, 500 games: 90.3% decisive win rate
 - Configurable rules: Moroccan classic, Rami 51, no threshold, no jokers
 
 ## Architecture
