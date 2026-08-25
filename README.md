@@ -1,5 +1,8 @@
 # ramai
 
+[![Tests](https://github.com/Vitalcheffe/ramai/actions/workflows/tests.yml/badge.svg)](https://github.com/Vitalcheffe/ramai/actions/workflows/tests.yml)
+
+
 The first system that plays **Moroccan Rami** against a human by looking at the cards on the table with a camera.
 
 Chess, Go, Poker have been solved by AI. Nobody had built an AI that plays Rami by looking at real cards. This is it.
