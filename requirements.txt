@@ -2,7 +2,7 @@
 # Core (CLI / dev)
 numpy>=2.0
 opencv-python-headless>=4.10
-pytest>=8.0
+pytest>=9.1.1
 
 # Vision (Colab only — heavy)
 # ultralytics>=8.2
