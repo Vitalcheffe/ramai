@@ -1,6 +1,6 @@
 # Rami-AI dependencies
 # Core (CLI / dev)
-numpy>=2.0
+numpy>=2.5.2
 opencv-python-headless>=4.10
 pytest>=8.0
 
