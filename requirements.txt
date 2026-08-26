@@ -10,4 +10,4 @@ pytest>=8.0
 # ipywidgets>=8.0
 
 # Optional: training visualizations
-matplotlib>=3.8
+matplotlib>=3.11.1
