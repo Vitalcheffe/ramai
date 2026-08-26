@@ -1,0 +1,10 @@
+{
+  "games": 200,
+  "opponent": "strategy",
+  "champion_wins": 7,
+  "opponent_wins": 2,
+  "stalemates": 191,
+  "champion_win_rate": 0.035,
+  "decisive_win_rate": 0.7777777777777778,
+  "avg_game_length": 36.43
+}
