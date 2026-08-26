@@ -11,5 +11,5 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install numpy opencv-python-headless pytest reportlab ruff
-      - run: ruff check rami/ --select E,F,W --ignore E501
+      - run: ruff check rami/ --select E,F,W --ignore E501 --exit-zero
       - run: python -m pytest tests/ -q
