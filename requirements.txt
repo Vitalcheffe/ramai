@@ -1,7 +1,7 @@
 # Rami-AI dependencies
 # Core (CLI / dev)
 numpy>=2.0
-opencv-python-headless>=4.10
+opencv-python-headless>=5.0.0.93
 pytest>=8.0
 
 # Vision (Colab only — heavy)
